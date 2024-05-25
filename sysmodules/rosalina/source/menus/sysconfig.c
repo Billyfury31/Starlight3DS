@@ -187,9 +187,10 @@ void SysConfigMenu_ControlWifi(void)
     Result resInit = acInit();
     for (u32 i = 0; i < 3; i++)
     {
-        // ssid[0] = '\0' if result is an error here
-        ACI_LoadNetworkSetting(i);
-        ACI_GetNetworkWirelessEssidSecuritySsid(ssids[i]);
+        if (R_SUCCEEDED(ACI_LoadNetworkSetting(i)))
+            ACI_GetNetworkWirelessEssidSecuritySsid(ssids[i]);
+        else
+            strcpy(ssids[i], "(not configured)");
     }
     if (R_SUCCEEDED(resInit))
         acExit();
@@ -426,9 +427,9 @@ void SysConfigMenu_Tip(void)
         Draw_DrawString(10, 80, COLOR_WHITE, "  sleep mode)");
         Draw_DrawString(10, 90, COLOR_WHITE, "  * Press Y to force blue led (allows bypassing");
         Draw_DrawString(10, 100, COLOR_WHITE, "  toggle led restriction on low battery)");
-        Draw_DrawString(10, 120, COLOR_WHITE, "While system is running:");
-        Draw_DrawString(10, 140, COLOR_WHITE, "  * Press A + B + X + Y + Start to instant reboot");
-        Draw_DrawString(10, 150, COLOR_WHITE, "  * Press Start + Select to toggle bottom screen");
+        Draw_DrawString(10, 120, COLOR_WHITE, "While the system is running:");
+        Draw_DrawString(10, 140, COLOR_WHITE, "  * Press Start + Select to toggle bottom screen");
+        Draw_DrawString(10, 150, COLOR_WHITE, "    (You can toggle this feature in Extra Config)");
 
         Draw_FlushFramebuffer();
         Draw_Unlock();

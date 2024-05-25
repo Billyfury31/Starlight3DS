@@ -225,9 +225,9 @@ u32 installK11Extension(u8 *pos, u32 size, bool needToInitSd, u32 baseK11VA, u32
     info->bottomScreenFilter = configData.bottomScreenFilter;
     info->autobootTwlTitleId = configData.autobootTwlTitleId;
     info->autobootCtrAppmemtype = configData.autobootCtrAppmemtype;
-    info->versionMajor = VERSION_MAJOR;
-    info->versionMinor = VERSION_MINOR;
-    info->versionBuild = VERSION_BUILD;
+    info->versionMajor = BASE_VERSION_MAJOR;
+    info->versionMinor = BASE_VERSION_MINOR;
+    info->versionBuild = BASE_VERSION_BUILD;
 
     if(ISRELEASE) info->flags = 1;
     if(ISN3DS) info->flags |= 1 << 4;
@@ -814,6 +814,17 @@ void patchTwlBg(u8 *pos, u32 size)
                 memcpy(off, filter, sizeof(filter));
             // else error("Failed to apply enable_dsi_external_filter.");
         }
+    }
+
+    // Allows up and down, left and right combo on DSi mode
+    u16 *off2;
+    for (off2 = (u16 *)pos; (u8 *)off2 < pos + size && (off2[0] != 0x2040 || off2[1] != 0x4020); off2++);
+
+    if ((u8 *)off2 < pos + size)
+    {
+        // else error("Failed to apply allow_updown_leftright_dsi.");
+        for (u32 i = 0; i < 8; i++)
+            off2[i] = 0x46C0;
     }
 }
 
